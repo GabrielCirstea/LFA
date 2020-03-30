@@ -18,6 +18,7 @@ __Formatul fisierului__:
 Tranzitiile au fost retinute asemanator cu cele de la AFD, dar acum elementele matricei sunt o serie/multime de stari in care se poate ajunge plecand de la starea sursa cu litera respectiva.  
 * Se pleaca din starea 0
 * Pentru fiecare litera a cuvantului se fac tranzitiile din starile curente
+  * se adauga in lista de stari __matrice[stareCurenta][litera]__;
 * Si se retin noile stari
 * La final se cauta starile finale in starile in care am ajuns.
 * Daca nu se gaseste nici o stare finala, ori daca nu am ramas cu nici o stare, cuvantul nu este acceptat de automat.
