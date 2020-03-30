@@ -63,8 +63,9 @@ void citire_imput(ifstream& fisier)
     fisier>>dimMatrice;
     for(int i=0;i<=nrStari;i++)
     {
-        cout<<"Stare finala:"<<stariFinale[i]<<endl;
+        cout<<stariFinale[i]<<" ";
     }
+    cout<<endl;
     cout<<"dim:"<<dimMatrice<<endl;
     for(int i = 0;i<dimMatrice;i++){
         char litera;

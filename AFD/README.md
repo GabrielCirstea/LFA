@@ -21,7 +21,7 @@ Tranzitiile au fost retinulte intr-o matrice:
 * la intersectia liniei cu coloana se afa starea in care se face tranzitia
 <br><br>
 Se pleaca din starea 0, se face parcurgerea din stare in stare cu literele cuvantului.
-Pentru fiecare litera a cuvantului se verifica daca estista:
+Pentru fiecare litera a cuvantului se verifica daca exista:
 __Matrice[stareCurenta][litera]__;  
 In caz afirmativ, aceasta devine starea curenta.  
 In caz contrar nu avem tranzitie, deci cuvantul nu este acceptat.
