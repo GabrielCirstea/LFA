@@ -25,6 +25,18 @@ int dimMatrice;
 string alfabet;
 int nrCuv;
 
+void afisare_info()
+{
+	cout<<"nrStari = "<<nrStari<<endl;
+    cout<<"alfabet:"<<alfabet<<endl;
+    cout<<"Stari finale:\n";
+	for(int i=0;i<=nrStari;i++)
+    {
+        cout<<stariFinale[i]<<" ";
+    }
+    cout<<endl;
+}
+
 void afisare_matrice(int matrice[40][40], int dimMatrice)
 {///afisare matrice de tranzitii
     cout<<"   ";
@@ -53,20 +65,12 @@ void afisare_matrice(int matrice[40][40], int dimMatrice)
 void citire_imput(ifstream& fisier)
 {///citirea din fisier
     fisier>>nrStari;
-    cout<<"nrStari = "<<nrStari<<endl;
     fisier.get();
     for(int i=0; i<=nrStari;i++)
         fisier>>stariFinale[i];
     EMP_BUF(fisier);
     getline(fisier,alfabet);
-    cout<<"alfabet:"<<alfabet<<endl;
     fisier>>dimMatrice;
-    for(int i=0;i<=nrStari;i++)
-    {
-        cout<<stariFinale[i]<<" ";
-    }
-    cout<<endl;
-    cout<<"dim:"<<dimMatrice<<endl;
     for(int i = 0;i<dimMatrice;i++){
         char litera;
         int sursa,dest;
@@ -77,7 +81,7 @@ void citire_imput(ifstream& fisier)
     }
     //pt afisare
     dimMatrice = nrStari+1;
-    afisare_matrice(matrice,dimMatrice);
+	
 }
 
 int delta(int stare, char c)
@@ -106,11 +110,15 @@ int AFD(string cuvant)
 int main()
 {
     cout << "Hello world!" << endl;
-    ifstream f("toAFD.in");
+    ifstream f("afd.in");
+	ofstream iesire("afd.out");
     citire_imput(f);
+	//pentru afisarea informatiilor citite.
+	afisare_info();
+    afisare_matrice(matrice,dimMatrice);
     int nr_cuvinte;
     f>>nr_cuvinte;
-    cout<<"cuvinte:"<<nr_cuvinte<<endl;
+    cout<<"nr cuvinte:"<<nr_cuvinte<<endl;
     EMP_BUF(f);
     string cuvant;
     for(int i=0;i<nr_cuvinte;i++)
@@ -118,7 +126,10 @@ int main()
         getline(f,cuvant);
         EMP_BUF(f);
         cout<<cuvant<<": ";
-        cout<<AFD(cuvant)<<endl;
-    }
+		int rezultat = AFD(cuvant);
+    	cout<<cuvant<<" "<<rezultat<<endl;
+		iesire<<rezultat<<endl;
+	}
+	f.close();
     return 0;
 }
