@@ -131,5 +131,6 @@ int main()
 		iesire<<rezultat<<endl;
 	}
 	f.close();
+	iesire.close();
     return 0;
 }

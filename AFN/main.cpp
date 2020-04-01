@@ -23,6 +23,18 @@ list<int> matrice[20][20];
 int dimMatrice;
 int nrCuv;
 
+void afisare_info()
+{
+	cout<<"Stari Finale ";
+    cout<<"nrStari = "<<nrStari<<endl;
+    for(int i=0;i<nrStari+1;i++)
+    {
+        cout<<stariFinale[i]<<" ";
+    }
+    cout<<endl;
+    cout<<"alfabet:"<<alfabet<<endl;
+}
+
 void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea pt AFN
 {
     cout<<"    ";
@@ -48,22 +60,13 @@ void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea 
 void citire_imput(ifstream& fisier)         ///citirea pt AFN
 {
     fisier>>nrStari;
-    cout<<"nrStari = "<<nrStari<<endl;
     fisier.get();
     //fisier>>nrStariFinale;
     for(int i=0;i<=nrStari;i++)
         fisier>>stariFinale[i];
     fisier.get();
     getline(fisier,alfabet);
-    cout<<"alfabet:"<<alfabet<<endl;
     fisier>>dimMatrice;
-    cout<<"Stari Finale ";
-    for(int i=0;i<nrStari+1;i++)
-    {
-        cout<<stariFinale[i]<<" ";
-    }
-    cout<<endl;
-    cout<<"dim:"<<dimMatrice<<endl;
     for(int i = 0;i<dimMatrice;i++){
         char litera;
         int sursa,dest;
@@ -73,7 +76,6 @@ void citire_imput(ifstream& fisier)         ///citirea pt AFN
         matrice[sursa][alfabet.find(litera,0)].push_back(dest);
     }
     dimMatrice = nrStari+1;
-    afisare_matrice(matrice,dimMatrice);
 }
 
 void delta(int stare, char c, queue<int>& coada)       ///adauga starile in coada
@@ -118,15 +120,23 @@ int AFN(string cuvant)
 int main()
 {
     cout << "Hello world!" << endl;
-    ifstream f("date.in");
-    citire_imput(f);
-    string cuvant;
+    ifstream f("AFN.in");
+    ofstream iesire("AFN.out");
+	citire_imput(f);
+    afisare_info();
+	afisare_matrice(matrice,nrStari);
+	string cuvant;
     int n;
     f>>n;
     f.get();
     while(f>>cuvant)    // getline(f,cuvant)
     {
-        cout<<cuvant<<": "<<AFN(cuvant)<<endl;
+		int rezultat = AFN(cuvant);
+        cout<<cuvant<<": "<<rezultat<<endl;
+		//pe linia i re pune rezultatul cuvantului i in fisier
+		iesire<<rezultat<<endl;
     }
+	f.close();
+	iesire.close();
     return 0;
 }
