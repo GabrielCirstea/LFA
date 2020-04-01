@@ -110,7 +110,7 @@ int AFD(string cuvant)
 int main()
 {
     cout << "Hello world!" << endl;
-    ifstream f("afd.in");
+    ifstream f("date.in");
 	ofstream iesire("afd.out");
     citire_imput(f);
 	//pentru afisarea informatiilor citite.
