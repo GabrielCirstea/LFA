@@ -19,7 +19,7 @@ void afisare_info()
 {
 	cout<<"Stari Finale ";
     cout<<"nrStari = "<<nrStari<<endl;
-    for(int i=0;i<nrStari;i++)
+    for(int i=0;i<nrStari+1;i++)
     {
         cout<<stariFinale[i]<<" ";
     }
@@ -156,7 +156,7 @@ void toAFD()
         }
     }
   cout<<"Tranzitii\n";
-  for(int i=0;i<stariAFD;i++)
+  for(int i=0;i<stariAFD+1;i++)
     {
       cout<<i<<":";
       for(int j=0;alfabet[j];j++)
@@ -197,6 +197,21 @@ void scrieAFD(ostream &out)
         }
     }
 }
+//functia pt AFD
+int AFD(string cuvant)
+{
+	int stareCurenta = 0;
+	for(int i=0;cuvant[i];i++)
+	{
+		if(matriceAFD[stareCurenta][alfabet.find(cuvant[i])]<0)
+				return 0;
+		stareCurenta = matriceAFD[stareCurenta][alfabet.find(cuvant[i])];
+	}
+	cout<<stareCurenta<<endl;
+	if(finaleAFD[stareCurenta])
+			return 1;
+	return 0;
+}
 int main()
 {
     cout<<"Hello Word!\n";
@@ -207,6 +222,16 @@ int main()
     toAFD();
     ofstream o("date.out");
     scrieAFD(o);
+	int nrCuv;
+	fisier>>nrCuv;
+	// in fisier va scrie si rezultatul cuvantului i pe linia i
+	for(int i=0;i<nrCuv;i++)
+		{
+			string cuvant;
+			fisier>>cuvant;
+			cout<<cuvant<<endl;
+			o<<AFD(cuvant)<<endl;
+		}
     fisier.close();
     o.close();
     return 0;

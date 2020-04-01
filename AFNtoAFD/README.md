@@ -26,3 +26,8 @@ Pornind din prima stare (0, prin convetie):
     * daca nu, o trecem in lista de multimi si punem indexul in matrice, de asemenea o trecem si in coada de multimi petru a o verifica.
 * Dupa ce am verificat multimea curenta cu toate literele alfabetului trecem la urmatoarea stare a AFD-ului si repetam procesul cu urmatoarea multime din coada.
 * Procesul se termina cand nu mai avem multimi ne verificate in coada.
+___
+Programul v-a strie AFD-ul intr-un fisier, in acelas format folosit si la 
+emularea AFD si AFN, urmat de un numar de linii egal cu numarul de cuvinte 
+din fisierul AFN, pe care se va scrie 1 daca cuvantul este acceptat de AFN 
+sau 0 in caz contrar.
