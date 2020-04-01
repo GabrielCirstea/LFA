@@ -27,7 +27,7 @@ void afisare_info()
 {
 	cout<<"Stari Finale ";
     cout<<"nrStari = "<<nrStari<<endl;
-    for(int i=0;i<nrStari+1;i++)
+    for(int i=0;i<nrStari;i++)
     {
         cout<<stariFinale[i]<<" ";
     }
@@ -38,13 +38,13 @@ void afisare_info()
 void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea pt AFN
 {
     cout<<"    ";
-    for(int i = 0;i<alfabet.length()-1;i++)
+    for(int i = 0;i<alfabet.length();i++)
         cout<<alfabet[i]<<"  ";
     cout<<endl;
     for(int i = 0;i<dimMatrice;i++)
     {
         cout<<i<<":";
-        for(int j = 0;j<alfabet.length()-1;j++)
+        for(int j = 0;j<alfabet.length();j++)
         {
             cout<<"{";
             for(list<int>::iterator t = matrice[i][j].begin();t!=matrice[i][j].end();t++)
@@ -60,9 +60,10 @@ void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea 
 void citire_imput(ifstream& fisier)         ///citirea pt AFN
 {
     fisier>>nrStari;
+	nrStari++; 	//se citeste indicele ultimei stari, starile incep de la 0, nu 1
     fisier.get();
     //fisier>>nrStariFinale;
-    for(int i=0;i<=nrStari;i++)
+    for(int i=0;i<nrStari;i++)
         fisier>>stariFinale[i];
     fisier.get();
     getline(fisier,alfabet);

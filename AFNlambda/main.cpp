@@ -72,9 +72,7 @@ void citire_fisier(ifstream &f)
         f>>dest;
         matrice[sursa][alfabet.find(litera,0)].push_back(dest);
     }
-    ///pt afisare
-    afisare();  ///afisarea datelor citite din fisier
-    afisare_matrice(matrice, nrStari+1);
+
 }
 
 list<int>& lambda_inchidere(int nod, char *vizitat)
@@ -144,6 +142,9 @@ int main()
     ifstream f("date1.in");
     ofstream F("date.out");
     citire_fisier(f);
+    ///pt afisare
+    afisare();  ///afisarea datelor citite din fisier
+    afisare_matrice(matrice, nrStari+1);
     int nrCuvinte;
     string cuvant;
     f>>nrCuvinte;
@@ -152,11 +153,13 @@ int main()
     for(int i=0;i<nrCuvinte;i++)
     {
         getline(f,cuvant);
+		int rezultat = AFNl(cuvant);
         //afisare in fisier indicele cuvantului - rezultatul automatului
-        F<<i<<" "<<AFNl(cuvant)<<endl;
+        F<<rezultat<<endl;
         //pentru afisare pe ecran
-        cout<<i<<" "<<AFNl(cuvant)<<endl;
+        cout<<cuvant<<": "<<rezultat<<endl;
     }
     f.close();
+	F.close();
     return 0;
 }

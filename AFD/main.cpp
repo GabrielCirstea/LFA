@@ -125,7 +125,6 @@ int main()
     {
         getline(f,cuvant);
         EMP_BUF(f);
-        cout<<cuvant<<": ";
 		int rezultat = AFD(cuvant);
     	cout<<cuvant<<" "<<rezultat<<endl;
 		iesire<<rezultat<<endl;

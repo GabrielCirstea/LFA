@@ -15,6 +15,17 @@ list<int> matrice[20][20];
 int dimMatrice;
 int nrCuv;
 
+void afisare_info()
+{
+	cout<<"Stari Finale ";
+    cout<<"nrStari = "<<nrStari<<endl;
+    for(int i=0;i<nrStari;i++)
+    {
+        cout<<stariFinale[i]<<" ";
+    }
+    cout<<endl;
+    cout<<"alfabet:"<<alfabet<<endl;
+}
 void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea pt AFN
 {
     cout<<"    ";
@@ -40,22 +51,13 @@ void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea 
 void citire_imput(ifstream& fisier)         ///citirea pt AFN
 {
     fisier>>nrStari;
-    cout<<"nrStari = "<<nrStari<<endl;
     fisier.get();
     //fisier>>nrStariFinale;
     for(int i=0;i<=nrStari;i++)
         fisier>>stariFinale[i];
     fisier.get();  // de 2 ori pt linux probleme cu \r\n
     getline(fisier,alfabet);
-    cout<<"alfabet:"<<alfabet<<endl;
     fisier>>dimMatrice;
-    cout<<"Stari Finale ";
-    for(int i=0;i<nrStari+1;i++)
-    {
-        cout<<stariFinale[i]<<" ";
-    }
-    cout<<endl;
-    cout<<"dim:"<<dimMatrice<<endl;
     for(int i = 0;i<dimMatrice;i++){
         char litera;
         int sursa,dest;
@@ -65,7 +67,6 @@ void citire_imput(ifstream& fisier)         ///citirea pt AFN
         matrice[sursa][alfabet.find(litera,0)].push_back(dest);
     }
     dimMatrice = nrStari+1;
-    afisare_matrice(matrice,dimMatrice);
 }
 void delta(int stare, char c,list<int> &lista)
 {
@@ -170,8 +171,9 @@ void toAFD()
 void scrieAFD(ostream &out)
 {
   out<<stariAFD<<endl;
-  for(int i=0;i<stariAFD+1;i++)
+  for(int i=0;i<stariAFD;i++)
     out<<finaleAFD[i]<<" "; // problema: lasa un spatiu la sfarsit
+  out<<finaleAFD[stariAFD];	//se pune ultimul elemente, apoi \n
   out<<endl;
   out<<alfabet<<endl;
   // alfabet.size() * nr_de_stari daca ar fi complet
@@ -200,6 +202,8 @@ int main()
     cout<<"Hello Word!\n";
     ifstream fisier("date.in");
     citire_imput(fisier);
+    afisare_info();
+	afisare_matrice(matrice,dimMatrice);
     toAFD();
     ofstream o("date.out");
     scrieAFD(o);
