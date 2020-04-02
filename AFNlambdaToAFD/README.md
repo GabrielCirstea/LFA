@@ -21,6 +21,6 @@ Programul trece AFN-ul intr-un AFD echivalent si il scrie intr-un fisier, folosi
 * vector caracteristic pentri starile finale
 * alfabet
 * nr de tranzitii N
-* N tranzitii de forma :litera stare stare:
+* N tranzitii de forma :litera stare stare:  
 Apoi vor fi M linii, unde M este numarul de cuvinte citite, pe care se 
 va afisa acceptanta cuvantului in AFD-ul optinut: 1 - este acceptate, 0 - nu este acceptat.
