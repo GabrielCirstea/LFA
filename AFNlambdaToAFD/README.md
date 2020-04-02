@@ -15,3 +15,12 @@ Asemenea cu trecerea de la AFN la AFD, plecam din prima stare si scriem multimea
     * le adaugam si in coada, pentru a le parcurge in continuare
     * trecem indicele multimii in matricea pentru AFD
 * dupa ce am parcurs o multime cu toare literele avansam pe urmatoarea linie a matricei AFD cu umratoarea multime din coada.
+___
+Programul trece AFN-ul intr-un AFD echivalent si il scrie intr-un fisier, folosind acelas format ca fisierul de intrare:
+* indecele ultimei stari
+* vector caracteristic pentri starile finale
+* alfabet
+* nr de tranzitii N
+* N tranzitii de forma :litera stare stare:
+Apoi vor fi M linii, unde M este numarul de cuvinte citite, pe care se 
+va afisa acceptanta cuvantului in AFD-ul optinut: 1 - este acceptate, 0 - nu este acceptat.

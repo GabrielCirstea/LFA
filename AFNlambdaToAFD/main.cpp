@@ -123,16 +123,11 @@ void toAFD()
   int nrMultimi=1, indexStare=0;
   multimiAFD[0] = set<int>({0});
   list<int> inchidere[VEC_SIZE];
-  cout<<"inchidere:\n";
   for(int i=0;i<nrStari;i++)
     {
       char vizitat[VEC_SIZE]={0};
       inchidere[i]=lambda_inchidere(i,vizitat);
-      forit(inchidere[i],it)
-        cout<<*it<<" ";
-      cout<<endl;
     }
-  cout<<"----\n";
   queue<set<int> > coada;
   coada.push(set<int>({0}));
   while(!coada.empty())
@@ -171,34 +166,12 @@ void toAFD()
       indexStare++;
       //cout<<"indexStare "<<indexStare<<endl;
     }// while coada
-  cout<<"Gata\n";
-  for(int i=0;i<nrMultimi;i++)
-    {
-      cout<<i<<":";
-      forit(multimiAFD[i],it)
-        cout<<*it<<" ";
-      cout<<endl;
-    }
-  cout<<"---\n";
-  stariAFD = indexStare;
-  for(int i=0;i<stariAFD;i++)
-    {
-      cout<<i<<":";
-      for(int j=0;alfabet[j]&&alfabet[j]!='\\';j++)
-        {
-          cout<<matriceAFD[i][j]<<" ";
-        }
-      cout<<endl;
-    }
-  cout<<"Stari finale:\n";
   for(int i=0;i<stariAFD;i++)
     {
       forit(multimiAFD[i],it)
         if(stariFinale[*it]) //daca in mutime se afla o stare finala
           finaleAFD[i]=1;    //atunic multimea devine stare finala
-      cout<<finaleAFD[i]<<" ";
     }
-  cout<<endl;
 }
 void scrieAFD(ostream &out)
 {
@@ -229,7 +202,20 @@ void scrieAFD(ostream &out)
         }
     }
 }
-
+int AFD(string cuvant)
+{
+    unsigned int i = 0;
+    int stareCurenta = 0;
+    for(i=0;cuvant[i];i++)
+	{
+        stareCurenta = matriceAFD[stareCurenta][alfabet.find(cuvant[i])];
+        if(stareCurenta < 0)
+            break;
+    }
+    if(finaleAFD[stareCurenta])
+        return 1;
+    return 0;
+}
 int main()
 {
   cout<<"Hello World!\n";
@@ -239,9 +225,17 @@ int main()
   afisare();  ///afisarea datelor citite din fisier
   afisare_matrice(matrice, nrStari+1);
   toAFD();
-  cout<<"---\n";
   ofstream F("iesire.out");
   scrieAFD(F);
+  int nrCuv;
+  fisier>>nrCuv;
+  for(int i=0;i<nrCuv;i++)
+  {
+	string cuvant;
+	fisier>>cuvant;
+	F<<AFD(cuvant)<<endl;
+  }
+  fisier.close();
   F.close();
   return 0;
 }
