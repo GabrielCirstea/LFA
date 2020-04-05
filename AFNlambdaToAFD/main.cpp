@@ -166,6 +166,7 @@ void toAFD()
       indexStare++;
       //cout<<"indexStare "<<indexStare<<endl;
     }// while coada
+  stariAFD = indexStare;
   for(int i=0;i<stariAFD;i++)
     {
       forit(multimiAFD[i],it)
