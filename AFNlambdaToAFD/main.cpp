@@ -166,8 +166,8 @@ void toAFD()
       indexStare++;
       //cout<<"indexStare "<<indexStare<<endl;
     }// while coada
-  stariAFD = indexStare;
-  for(int i=0;i<stariAFD;i++)
+  stariAFD = indexStare-1;
+  for(int i=0;i<stariAFD+1;i++)
     {
       forit(multimiAFD[i],it)
         if(stariFinale[*it]) //daca in mutime se afla o stare finala
