@@ -11,6 +11,9 @@ using namespace std;
             c = fisier.peek();\
         }\
     }       //.get(), pt golirea buff-erului, in linux nu mai e \r dar prezenta lui din windows persista
+//...............................
+//Formatul fisierului de intrare:
+//
 // nr de stari
 //lista de stari finale 1 - finala, 0 - nu
 //nr de adiacente
@@ -18,6 +21,7 @@ using namespace std;
 //nr de cuvinte
 //cuvinte
 ///chestiile citite pt automat
+//..............................
 int nrStari, stariFinale[20];
 //matrice de adiacenta
 int matrice[40][40] = {{-1}};
@@ -39,6 +43,7 @@ void afisare_info()
 
 void afisare_matrice(int matrice[40][40], int dimMatrice)
 {///afisare matrice de tranzitii
+  //se afiseaza literele
     cout<<"   ";
     int size = alfabet.length();
     for(int i = 0;i<size;i++)
@@ -81,7 +86,6 @@ void citire_imput(ifstream& fisier)
     }
     //pt afisare
     dimMatrice = nrStari+1;
-	
 }
 
 int delta(int stare, char c)
@@ -111,10 +115,10 @@ int main()
 {
     cout << "Hello world!" << endl;
     ifstream f("date.in");
-	ofstream iesire("afd.out");
+    ofstream iesire("afd.out");
     citire_imput(f);
-	//pentru afisarea informatiilor citite.
-	afisare_info();
+    //pentru afisarea informatiilor citite.
+    afisare_info();
     afisare_matrice(matrice,dimMatrice);
     int nr_cuvinte;
     f>>nr_cuvinte;
@@ -125,11 +129,11 @@ int main()
     {
         getline(f,cuvant);
         EMP_BUF(f);
-		int rezultat = AFD(cuvant);
-    	cout<<cuvant<<" "<<rezultat<<endl;
-		iesire<<rezultat<<endl;
+        int rezultat = AFD(cuvant);
+        cout<<cuvant<<" "<<rezultat<<endl;
+        iesire<<rezultat<<endl;
 	}
 	f.close();
 	iesire.close();
-    return 0;
+  return 0;
 }
