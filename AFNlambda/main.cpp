@@ -14,7 +14,7 @@ using namespace std;
             fisier.get();\
             c = fisier.peek();\
         }\
-    } 
+    }
 int nrStari;
 int stariFinale[VEC_SIZE];
 string alfabet;
@@ -152,14 +152,14 @@ int main()
     EMP_BUF(f);
     for(int i=0;i<nrCuvinte;i++)
     {
-        getline(f,cuvant);
-		int rezultat = AFNl(cuvant);
-        //afisare in fisier indicele cuvantului - rezultatul automatului
-        F<<rezultat<<endl;
-        //pentru afisare pe ecran
-        cout<<cuvant<<": "<<rezultat<<endl;
+      getline(f,cuvant);
+      int rezultat = AFNl(cuvant);
+      //afisare in fisier indicele cuvantului - rezultatul automatului
+      F<<rezultat<<endl;
+      //pentru afisare pe ecran
+      cout<<cuvant<<": "<<rezultat<<endl;
     }
     f.close();
-	F.close();
+    F.close();
     return 0;
 }

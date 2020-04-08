@@ -26,13 +26,13 @@ int nrCuv;
 void afisare_info()
 {
 	cout<<"Stari Finale ";
-    cout<<"nrStari = "<<nrStari<<endl;
-    for(int i=0;i<nrStari;i++)
-    {
-        cout<<stariFinale[i]<<" ";
-    }
-    cout<<endl;
-    cout<<"alfabet:"<<alfabet<<endl;
+  cout<<"nrStari = "<<nrStari<<endl;
+  for(int i=0;i<nrStari;i++)
+  {
+      cout<<stariFinale[i]<<" ";
+  }
+  cout<<endl;
+  cout<<"alfabet:"<<alfabet<<endl;
 }
 
 void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea pt AFN
@@ -120,24 +120,24 @@ int AFN(string cuvant)
 
 int main()
 {
-    cout << "Hello world!" << endl;
-    ifstream f("AFN.in");
-    ofstream iesire("AFN.out");
+  cout << "Hello world!" << endl;
+  ifstream f("AFN.in");
+  ofstream iesire("AFN.out");
 	citire_imput(f);
-    afisare_info();
+  afisare_info();
 	afisare_matrice(matrice,nrStari);
 	string cuvant;
-    int n;
-    f>>n;
-    f.get();
-    while(f>>cuvant)    // getline(f,cuvant)
-    {
-		int rezultat = AFN(cuvant);
+  int n;
+  f>>n;
+  f.get();
+  while(f>>cuvant)    // getline(f,cuvant)
+  {
+    int rezultat = AFN(cuvant);
         cout<<cuvant<<": "<<rezultat<<endl;
-		//pe linia i re pune rezultatul cuvantului i in fisier
-		iesire<<rezultat<<endl;
-    }
+    //pe linia i re pune rezultatul cuvantului i in fisier
+    iesire<<rezultat<<endl;
+  }
 	f.close();
 	iesire.close();
-    return 0;
+  return 0;
 }
