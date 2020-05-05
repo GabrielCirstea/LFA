@@ -5,9 +5,11 @@
 using namespace std;
 
 #define VEC_SIZE 40
-#define LAMBDA "lambda"
+#define LAMBDA 'l'
 #define LOG(x) cout<<#x<<" "<<x<<endl;
 string E[VEC_SIZE]; // expresiile dintre pipe-uri
+string REZ[VEC_SIZE];
+int nREZ;
 int nE = 0;
 struct node{
   char s;
@@ -94,6 +96,15 @@ void getNodes()
         }
     }
 }
+string getTranzitie(int start, char s, int end)
+{
+  string rez = to_string(start);
+  rez += " - ";
+  rez += s;
+  rez += " - ";
+  rez += to_string(end);
+  return rez;
+}
 void showAFN(vector<node> e[VEC_SIZE], int n)
 {
   //avem 2 stari
@@ -108,46 +119,59 @@ void showAFN(vector<node> e[VEC_SIZE], int n)
             {
             case 0:
               {
-                cout<<cursor<<"-"<<o.s<<"-"<<S<<endl;
+                REZ[nREZ++]=getTranzitie(cursor,o.s,S);
                 cursor = S;
                 S++;
               }break;
             case 1:
               {
-                cout<<cursor<<"-"<<LAMBDA<<" -"<<S<<endl;
-                cout<<S<<"-"<<o.s<< "- "<<S<<endl;
+                REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+                REZ[nREZ++]=getTranzitie(S,o.s,S);
                 cursor = S;
                 S++;
               }break;
             case 2:
               {
-                cout<<cursor<<"-"<<LAMBDA<<" -"<<S<<endl;
+                REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
                 cursor = S;
                 S++;
-                cout<<cursor<<"-"<<o.s<<"-"<<S<<endl;
-                cout<<S<<"-"<<LAMBDA<<" -"<<cursor<<endl;
+                REZ[nREZ++]=getTranzitie(cursor,o.s,S);
+                REZ[nREZ++]=getTranzitie(S,LAMBDA,cursor);
                 cursor = S;
                 S++;
               }break;
             }
         }
       // legaturi cu starea finala
-      cout<<cursor<<"- lamba - 1\n";
+      REZ[nREZ++]=getTranzitie(cursor,LAMBDA,1);
     }
+}
+void afisare(ostream& out)
+{
+  out<<nREZ<<endl;
+  for(int i=0;i<nREZ;i++)
+    {
+      out<<REZ[i]<<endl;
+    }
+  // starea finala
+  out<<1<<endl;
 }
 int main()
 {
   cout<<"Salutare!\n";
-  ifstream f("date.in");
+  ifstream f("regexeasy.in");
+  ofstream F("regexeasy.out");
   string exp;
   while(getline(f,exp))
     {
-      cout<<exp<<endl;
-      cout<<"----------\n";
+      nREZ = 0;
+      //cout<<exp<<endl;
+      //cout<<"----------\n";
       parsare(exp);
       getNodes();
       showAFN(Noduri,nE);
-      cout<<"...........\n";
+      afisare(F);
+      //cout<<"...........\n";
     }
   return 0;
 }

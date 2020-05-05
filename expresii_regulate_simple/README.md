@@ -19,4 +19,4 @@ ex: (ab)*
     * pt * se face circuit in starea respectiva
     * pt + se face tranzitie cu caracter la o alta stare din care ne intoarce cu lambda tranzitie.
 ___
-Programul citeste dintr-un fisier expresii scrie pe linii si afiseaza automatul construit pe ecran.
+Programul citeste dintr-un fisier expresii scrie intr-un fisier nr de tranzitii urmate de tranzitiile automatului. La final este scrisa starea finala care este, prin conventie, 1.
