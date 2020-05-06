@@ -159,24 +159,24 @@ void sparge(string expresie, int cursor)
 			{
 				case 1:
 					{
-            REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-            REZ[nREZ++]=getTranzitie(S,expresie[i],S);
+						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+						REZ[nREZ++]=getTranzitie(S,expresie[i],S);
 						cursor = S;
 						S++;
 					}break;
 				case 2:
 					{
-            REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
 						cursor = S;
 						S++;
-            REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
-            REZ[nREZ++]=getTranzitie(S,LAMBDA,cursor);
+						REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
+						REZ[nREZ++]=getTranzitie(S,LAMBDA,cursor);
 						cursor = S;
 						S++;
 					}break;
 				case 0:
 					{
-            REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
+						REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
 						cursor = S;
 						S++;
 					}break;
@@ -195,20 +195,20 @@ void sparge(string expresie, int cursor)
 			{
 				case 1:
 					{
-            REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
 						cursor = S++;
 						afisare_bucati(next,cursor);
-            REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
-            REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+						REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
+						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
 					}break;
 				case 2:
 					{
-            REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
 						cursor = S++;
 						afisare_bucati(next,cursor);
-            REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
+						REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
 					}break;
-			}
+				}
 			cursor = S++;
 		}
 	}
@@ -230,7 +230,7 @@ void afisare_bucati(string& expresie, int initial=0)
 		sparge(expresie.substr(oldPos,pos-oldPos),cursor);
 		//aceeasi stari la final
 		if(stareComuna)
-      REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna),S++;
+		  REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna),S++;
 	}while(pos!=string::npos);
 }
 void afisare(ostream& out)
