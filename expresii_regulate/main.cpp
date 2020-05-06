@@ -6,8 +6,9 @@ using namespace std;
 #define VEC_SIZE 40
 #define LAMBDA 'l'
 #define LOG(x) cout<<#x<<" "<<x<<endl;
-int S = 1;	// numarul de stari si ultima stare scris in automat
+int S = 2;	// numarul de stari si ultima stare scris in automat
 int cursor = 0;
+int lastComun;
 string REZ[VEC_SIZE]; // tranzitiile
 int nREZ;  // nr de tranziiti
 
@@ -183,6 +184,7 @@ void sparge(string expresie, int cursor)
 			}
 			if(simbol) i++;	// daca are simbol, vom sari peste simbol
 			//	sa nu afisam simbolul la urmatoarea iteratie
+			lastComun = cursor;
 		}
 		else
 		{
@@ -230,8 +232,10 @@ void afisare_bucati(string& expresie, int initial=0)
 		sparge(expresie.substr(oldPos,pos-oldPos),cursor);
 		//aceeasi stari la final
 		if(stareComuna)
-		  REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna),S++;
+		  REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna);//S++;
 	}while(pos!=string::npos);
+	if(stareComuna)
+		lastComun = stareComuna;
 }
 void afisare(ostream& out)
 {
@@ -261,6 +265,8 @@ int main()
         }
       removeWhiteSpaces(expresie);
       afisare_bucati(expresie);
+	  // ce facem cand nu avem pipe, sau un pipe in paranteza ne redundata, care o sa fie starea finala?
+		REZ[nREZ++] = getTranzitie(lastComun,LAMBDA,1);
       afisare(F);
       //cout<<"...........\n";
     }
