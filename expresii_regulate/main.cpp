@@ -56,7 +56,7 @@ int paranteze_redundante(string& expresie, int pos)
 		}
 		else if(expresie[i] == ')')
 		{
-			int beg = (pos-1) > 0 ? (pos-1) : 0;	// trebuie ster la pos-1
+			int beg = (pos-1) > 0 ? (pos-1) : 0;	// trebuie sters la pos-1
 			if(i == expresie.size()-1)
 			{// e pe ultima pozitie
 				expresie.erase(i);
@@ -68,6 +68,7 @@ int paranteze_redundante(string& expresie, int pos)
 				expresie.erase(i,1);
 				expresie.erase(beg,1);
 				//expresie[beg] = ' ';
+        i--;    // ne intoarcem la caracterul de dinaintea parantezei sterse;
 			}
 			return i+1;
 		}
@@ -184,7 +185,8 @@ void sparge(string expresie, int cursor)
 			}
 			if(simbol) i++;	// daca are simbol, vom sari peste simbol
 			//	sa nu afisam simbolul la urmatoarea iteratie
-			lastComun = cursor;
+			lastComun = cursor;   // tinem minte ultima stare in care am ajuns
+      // pt situatiile in care nu avem pipe-uri
 		}
 		else
 		{
@@ -202,6 +204,8 @@ void sparge(string expresie, int cursor)
 						afisare_bucati(next,cursor);
 						REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
 						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+            lastComun = S;  // tinem minte starea in care am ajuns
+            // pentru cazurile in care avem simbol (+,*), care nu este afectat de pipe gen ab(ab)*;
 					}break;
 				case 2:
 					{
@@ -255,6 +259,7 @@ int main()
   string expresie;
   while(getline(f,expresie))
     {
+      S = 2;
       nREZ = 0;
       //cout<<exp<<endl;
       //cout<<"----------\n";
