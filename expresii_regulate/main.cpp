@@ -1,16 +1,13 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 
 using namespace std;
+#define LOG(x) cout<<#x<<": "<<x<<endl
 #define VEC_SIZE 40
 #define LAMBDA 'l'
-#define LOG(x) cout<<#x<<" "<<x<<endl;
-int S = 2;	// numarul de stari si ultima stare scris in automat
-int cursor = 0;
-int lastComun;
-string REZ[VEC_SIZE]; // tranzitiile
-int nREZ;  // nr de tranziiti
+int S,cursor, lastComun;
+string REZ[VEC_SIZE];
+int nREZ;
 
 string getTranzitie(int start, char s, int end)
 {
@@ -20,15 +17,6 @@ string getTranzitie(int start, char s, int end)
   rez += " - ";
   rez += to_string(end);
   return rez;
-}
-void removeWhiteSpaces(string& s)
-{//eliminam spatiile de la inceputul si sfarsitul expresiei
-  int n = -1;
-  while(s[++n] == ' ');
-  s.erase(0,n);
-  string::iterator it = s.end()-1;
-  while((*it)==' ') it--;
-  s.erase(it+1,s.end());
 }
 int verificare_paranteze(string& expresie)
 {
@@ -46,198 +34,246 @@ int verificare_paranteze(string& expresie)
 		return 1;	//e bine
 	return 0;
 }
-int paranteze_redundante(string& expresie, int pos)
-{// cauta paranteze redundate si le sterge
-	for(int i=pos;i<expresie.size();i++)
+void removeWhiteSpaces(string& s)
+{//eliminam spatiile de la inceputul si sfarsitul expresiei
+  int n = -1;
+  while(s[++n] == ' ');
+  s.erase(0,n);
+  string::iterator it = s.end()-1;
+  while((*it)==' ') it--;
+  s.erase(it+1,s.end());
+}
+int skip_space(const string& expresie,int start=0)
+{
+	while(expresie[start] == ' ') // \0 != ' '
+		start++;
+	return start;
+}
+int map_simbol(char s)
+{
+	switch(s)
+	{
+		case '*':
+			return 1;
+		case '+':
+			return 2;
+		default:
+			return 0;
+	}
+}
+int get_simbol(const string& expresie, int start = 0)
+{	// returneaza indexul simbolului fata de start
+	if(expresie[start]=='(')
+	{
+		int paranteze = 0;
+		for(int i=start, n=expresie.size();i<n;i++)
+		{	//mergem pana la inchiderea parantezei
+			if(expresie[i] == '(')
+				paranteze++;
+			if(expresie[i] == ')')
+			{
+				paranteze--;
+				if(!paranteze)
+				{
+					i = skip_space(expresie,i+1);
+					// sarim peste spatiile libere
+					return i;
+				}//if
+			}//if
+		}//for
+	}
+	else
+	{
+		start = skip_space(expresie,start+1);
+		return start;
+	}
+	return 0;
+}
+char look_before(const string& expresie, int begin)
+{
+	if(begin<0)
+		return '(';
+	while(begin && expresie[begin] == ' ')
+		begin--;
+	return expresie[begin];
+}
+int paranteze_redundante(string& expresie,int start=0)
+{
+	// eliminam parantezele cand in interiorul lor nu se afla un pipe
+	// cand nu sunt urmate de un simbol * sau +
+	int pipe = 0;
+	for(int i=start;i<expresie.size();i++)
 	{
 		if(expresie[i] == '(')
 		{
 			i = paranteze_redundante(expresie,i+1);
 		}
-		else if(expresie[i] == ')')
+		else
 		{
-			int beg = (pos-1) > 0 ? (pos-1) : 0;	// trebuie sters la pos-1
-			if(i == expresie.size()-1)
-			{// e pe ultima pozitie
-				expresie.erase(i);
-				expresie.erase(beg,1);
-				//expresie[beg] = ' ';	// erase la sfarsit nu merge dupa erase-ul de mai devreme.
-			}
-			else if(expresie[i+1]!='*' && expresie[i+1]!='+')	// stergem parantezele
+			if(expresie[i] == '|')
+				pipe = 1;
+			// acum ca avem pipe, o sa facem ceva cu el
+			if(expresie[i] == ')')
 			{
-				expresie.erase(i,1);
-				expresie.erase(beg,1);
-				//expresie[beg] = ' ';
-        i--;    // ne intoarcem la caracterul de dinaintea parantezei sterse;
+				// daca avem pipe si este langa alte expresii
+				// ex: a(a|b)
+				if(pipe)
+				{
+					if(!(look_before(expresie,start-2)=='(' && 
+						(expresie[skip_space(expresie,i+1)] == ')' ||
+						 i == expresie.size()-1)))
+						return i;
+
+				}
+				char simbol = expresie[skip_space(expresie,i+1)];
+				if(map_simbol(simbol) && i-start > 1) 	// daca paranteza e urmata de un simbol
+					return i;
+				// daca am ajuns pana aici
+				// inseamna ca paranteza poate fi stearsa
+				{
+					// daca inainte de paranteza noastra avem (
+					// si dupa paranteza inchisa avem tot ) atunci putem sterge parantezele
+					int beg = start-1 > 0 ? start-1 : 0;
+					//eliminam parantezele
+					expresie.erase(i,1);
+					expresie.erase(beg,1);
+					i-=2;	// am sters 2 caractere, ne intoarcem 2 caractere
+
+				}
+				return i;
 			}
-			return i+1;
 		}
 	}
 	return 0;
 }
-long unsigned int split_pipe(const string& expresie, int start=0)
+int find_pipe(const string& exp, int start=0)
 {
-	int paranteze = 0;
-	int n = expresie.size();
-	for(int i=start;i<n;i++)
+	int paranteze =0;
+	for(int i=start;exp[i];i++)
 	{
-		if(expresie[i] == '(')
+		if(exp[i] == '(')
 			paranteze++;
-		if(expresie[i] == ')')
+		if(exp[i] == ')')
+		{
 			paranteze--;
-		if(expresie[i] == '|')
+		}
+		if(exp[i] == '|')
 		{
 			if(!paranteze)
 				return i;
 		}
 	}
-	return string::npos;
+	return -1;
 }
-int search_simbol(const string& exp, int start)
-{// cautam seimbolul pt paranteza curenta
-	if(exp[start]!='(')
-	{	// cazul in care e caracter
-		if(start == exp.size()-1)
-			return 0;
-		if(exp[start+1] == '*')
-			return 1;
-		if(exp[start+1] == '+')
-			return 2;
-		return 0;
-	}
-	int n=exp.size(),i, paranteze = 0;
-	for(i=start;i<n;i++)
-	{
-		if(exp[i] == '(')
-			paranteze++;
-		if(exp[i]==')')
-		{
-			paranteze--;
-			if(!paranteze)
-				break;
-		}
-	}
-	if(i!=n)
-	{// cauta simbolul dincolo de spatiile goale
-		for(;i<n;i++)
-		{
-			if(exp[i] == '*')
-				return 1;
-			if(exp[i] == '+')
-				return 2;
-		}
-	}
-	return 0;
-}
-string get_substr(string& exp,int start)
+void sparge(string& expresie, int initial);
+void do_simbol(string& expresie, int simbol)
 {
-	if(exp[start]!='(')
-		return "";
-	int n=exp.size(),i, paranteze = 0;
-	for(i=start;i<n;i++)
+	int crs = cursor;		// un cursor local
+	switch(simbol)
 	{
-		if(exp[i] == '(')
-			paranteze++;
-		if(exp[i]==')')
-		{
-			paranteze--;
-			if(!paranteze)
-				break;
-		}
-	}
-	return exp.substr(start,i-start+1);
-}
-void afisare_bucati(string& expresie,int);
-void sparge(string expresie, int cursor)
-{
-  removeWhiteSpaces(expresie);
-	int n=expresie.size();
-	for(int i=0;i<n;i++)
-	{
-		if(expresie[i]!='(')	// trebuie sa punem si simbolurile
-		{
-			int simbol = search_simbol(expresie,i);
-			switch(simbol)
+		case 1:
 			{
-				case 1:
-					{
-						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-						REZ[nREZ++]=getTranzitie(S,expresie[i],S);
-						cursor = S;
-						S++;
-					}break;
-				case 2:
-					{
-						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-						cursor = S;
-						S++;
-						REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
-						REZ[nREZ++]=getTranzitie(S,LAMBDA,cursor);
-						cursor = S;
-						S++;
-					}break;
-				case 0:
-					{
-						REZ[nREZ++]=getTranzitie(cursor,expresie[i],S);
-						cursor = S;
-						S++;
-					}break;
-			}
-			if(simbol) i++;	// daca are simbol, vom sari peste simbol
-			//	sa nu afisam simbolul la urmatoarea iteratie
-			lastComun = cursor;   // tinem minte ultima stare in care am ajuns
-      // pt situatiile in care nu avem pipe-uri
+				REZ[nREZ++]=getTranzitie(crs,LAMBDA,S);
+				crs = S++;
+				sparge(expresie,crs);
+				REZ[nREZ++]=getTranzitie(S-1,LAMBDA,crs);
+				REZ[nREZ++]=getTranzitie(crs,LAMBDA,S);
+				lastComun = S;  // tinem minte starea in care am ajuns
+				// pentru cazurile in care avem simbol (+,*), care nu este afectat de pipe gen ab(ab)*;
+			}break;
+		case 2:
+			{
+				REZ[nREZ++]=getTranzitie(crs,LAMBDA,S);
+				crs = S++;
+				sparge(expresie,crs);
+				REZ[nREZ++]=getTranzitie(S-1,LAMBDA,crs);
+			}break;
+		default:
+			{
+				sparge(expresie,crs);
+				S=cursor--;		//cazul asta face practic o miscare goala
+								// si creste S fara sa pastreze legatura intre stari
+			}break;
+		}
+		cursor = S++;
+
+}
+void do_simbol(char c, int simbol)
+{
+	switch(simbol)
+	{
+		case 1:
+			{
+				REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+				REZ[nREZ++]=getTranzitie(S,c,S);
+				cursor = S;
+				S++;
+			}break;
+		case 2:
+			{
+				REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
+				cursor = S;
+				S++;
+				REZ[nREZ++]=getTranzitie(cursor,c,S);
+				REZ[nREZ++]=getTranzitie(S,LAMBDA,cursor);
+				cursor = S;
+				S++;
+			}break;
+		case 0:
+			{
+				REZ[nREZ++]=getTranzitie(cursor,c,S);
+				cursor = S;
+				S++;
+			}break;
+	}
+	lastComun = cursor;   // tinem minte ultima stare in care am ajuns
+	// pt situatiile in care nu avem pipe-uri
+
+}
+void procesare_expresie(const string& expresie, int cursor)
+{
+	for(int i=0,n = expresie.size();i<n;i++)
+	{
+		if(expresie[i] == '(')
+		{
+			//avansam pana la finalul parantezei
+			int end = get_simbol(expresie,i);	// indexul simbolului
+			int simbol = map_simbol(expresie[end]);	// numarul simbolului
+			string next = expresie.substr(i+1,end-2-i);
+			LOG(next);
+			if(simbol)		// daca e un simbol, vom sarii si peste el
+				i = end;
+			else			// daca nu e simbol, atunci ne-am oprit pe o litera
+				i = end-1;
+			do_simbol(next,simbol);
 		}
 		else
 		{
-			int simbol = search_simbol(expresie,i);
-			string next = get_substr(expresie,i);
-			i+= next.size();	// avansam dincolo de paranteza
-			//LOG(next);
-			//cin.get();
-			switch(simbol)
-			{
-				case 1:
-					{
-						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-						cursor = S++;
-						afisare_bucati(next,cursor);
-						REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
-						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-            lastComun = S;  // tinem minte starea in care am ajuns
-            // pentru cazurile in care avem simbol (+,*), care nu este afectat de pipe gen ab(ab)*;
-					}break;
-				case 2:
-					{
-						REZ[nREZ++]=getTranzitie(cursor,LAMBDA,S);
-						cursor = S++;
-						afisare_bucati(next,cursor);
-						REZ[nREZ++]=getTranzitie(S-1,LAMBDA,cursor);
-					}break;
-				}
-			cursor = S++;
+			int simInd = get_simbol(expresie,i);
+			int simbol = map_simbol(expresie[simInd]);
+			do_simbol(expresie[i],simbol);
+			//cout<<expresie[i]<<" ";LOG(simbol);
+			if(simbol)
+				i = simInd;
 		}
 	}
 }
-void afisare_bucati(string& expresie, int initial=0)
-{// practi functia principala
-	paranteze_redundante(expresie,0);
-	removeWhiteSpaces(expresie);
-	int pos = -1,oldPos = pos;
+void sparge(string& expresie, int initial=0)
+{	// sparge dupa pipe-uri
+	int pos = -1, prev;
 	int stareComuna=0;
 	// daca este pipe, atunci o sa avem o stare finala comuna
-	if(split_pipe(expresie,0)!= string::npos)
+	if(find_pipe(expresie,0)!= -1)
 		stareComuna= S++;
 	do
 	{
-		oldPos=pos+1;
-		pos = split_pipe(expresie,oldPos);
+		prev = pos+1;
+		pos = find_pipe(expresie,prev);
 		cursor = initial;
-		sparge(expresie.substr(oldPos,pos-oldPos),cursor);
-		//aceeasi stari la final
-		if(stareComuna)
-		  REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna);//S++;
-	}while(pos!=string::npos);
+		procesare_expresie(expresie.substr(prev,pos-prev),cursor);
+		if(stareComuna)		// daca avem pipe, ne vom intoarce cu toate laturile aici
+		  REZ[nREZ++]=getTranzitie(S-1,LAMBDA,stareComuna);
+	}while(pos != -1);
 	if(stareComuna)
 		lastComun = stareComuna;
 }
@@ -253,27 +289,25 @@ void afisare(ostream& out)
 }
 int main()
 {
-	cout<<"Salutare!\n";
-  ifstream f("regexhard.in");
-  ofstream F("regexhard.out");
-  string expresie;
-  while(getline(f,expresie))
-    {
-      S = 2;
-      nREZ = 0;
-      //cout<<exp<<endl;
-      //cout<<"----------\n";
-      if(!verificare_paranteze(expresie))
-        {
-          cout<<"Paranteze incorecte\n";
-          continue;
-        }
-      removeWhiteSpaces(expresie);
-      afisare_bucati(expresie);
-	  // ce facem cand nu avem pipe, sau un pipe in paranteza ne redundata, care o sa fie starea finala?
+	cout<<"Salutare\n";
+	ifstream f("regexhard.in");
+	ofstream F("regexheard.out");
+	string expresie;
+	while(getline(f,expresie))
+	{
+		S = 2;
+		nREZ = 0;
+		if(!verificare_paranteze(expresie))
+		{
+			cout<<"Paranteze aiurea\n";
+			continue;
+		}
+		LOG(expresie);
+		paranteze_redundante(expresie);
+		LOG(expresie);
+		sparge(expresie);
 		REZ[nREZ++] = getTranzitie(lastComun,LAMBDA,1);
-      afisare(F);
-      //cout<<"...........\n";
-    }
+		afisare(cout);
+	}
 	return 0;
 }
