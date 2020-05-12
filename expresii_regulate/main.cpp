@@ -97,6 +97,25 @@ char look_before(const string& expresie, int begin)
 		begin--;
 	return expresie[begin];
 }
+int find_pipe(const string& exp, int start=0)
+{
+	int paranteze =0;
+	for(int i=start;exp[i];i++)
+	{
+		if(exp[i] == '(')
+			paranteze++;
+		if(exp[i] == ')')
+		{
+			paranteze--;
+		}
+		if(exp[i] == '|')
+		{
+			if(!paranteze)
+				return i;
+		}
+	}
+	return -1;
+}
 int paranteze_redundante(string& expresie,int start=0)
 {
 	// eliminam parantezele cand in interiorul lor nu se afla un pipe
@@ -110,11 +129,13 @@ int paranteze_redundante(string& expresie,int start=0)
 		}
 		else
 		{
-			if(expresie[i] == '|')
-				pipe = 1;
-			// acum ca avem pipe, o sa facem ceva cu el
 			if(expresie[i] == ')')
 			{
+				pipe = find_pipe(expresie,start);
+				if(pipe != -1 && pipe<i) 		// daca pipe-ul se afla in paranteza asta
+					pipe = 1;
+				else
+					pipe = 0;
 				// daca avem pipe si este langa alte expresii
 				// ex: a(a|b)
 				if(pipe)
@@ -122,7 +143,9 @@ int paranteze_redundante(string& expresie,int start=0)
 					if(!(look_before(expresie,start-2)=='(' && 
 						(expresie[skip_space(expresie,i+1)] == ')' ||
 						 i == expresie.size()-1)))
+					{
 						return i;
+					}
 
 				}
 				char simbol = expresie[skip_space(expresie,i+1)];
@@ -145,25 +168,6 @@ int paranteze_redundante(string& expresie,int start=0)
 		}
 	}
 	return 0;
-}
-int find_pipe(const string& exp, int start=0)
-{
-	int paranteze =0;
-	for(int i=start;exp[i];i++)
-	{
-		if(exp[i] == '(')
-			paranteze++;
-		if(exp[i] == ')')
-		{
-			paranteze--;
-		}
-		if(exp[i] == '|')
-		{
-			if(!paranteze)
-				return i;
-		}
-	}
-	return -1;
 }
 void sparge(string& expresie, int initial);
 void do_simbol(string& expresie, int simbol)
@@ -240,7 +244,6 @@ void procesare_expresie(const string& expresie, int cursor)
 			int end = get_simbol(expresie,i);	// indexul simbolului
 			int simbol = map_simbol(expresie[end]);	// numarul simbolului
 			string next = expresie.substr(i+1,end-2-i);
-			LOG(next);
 			if(simbol)		// daca e un simbol, vom sarii si peste el
 				i = end;
 			else			// daca nu e simbol, atunci ne-am oprit pe o litera
@@ -290,8 +293,12 @@ void afisare(ostream& out)
 int main()
 {
 	cout<<"Salutare\n";
+	if(!(0 && (1||0)))
+		cout<<"da\n";
+	else
+		cout<<"nu";
 	ifstream f("regexhard.in");
-	ofstream F("regexheard.out");
+	ofstream F("regexhard.out");
 	string expresie;
 	while(getline(f,expresie))
 	{
@@ -307,7 +314,7 @@ int main()
 		LOG(expresie);
 		sparge(expresie);
 		REZ[nREZ++] = getTranzitie(lastComun,LAMBDA,1);
-		afisare(cout);
+		afisare(F);
 	}
 	return 0;
 }
