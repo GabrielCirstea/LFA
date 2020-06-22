@@ -24,7 +24,7 @@ void afisare()
         cout<<stariFinale[i]<<" ";
     cout<<endl;
 }
-void afisare_matrice(int matrice[20][20],int dimMatrice, int col)      ///afisarea pt AFN
+void afisare_matrice(int matrice[20][20],int dimMatrice, int col)      ///afisarea pt AFD
 {
     cout<<"   ";
     for(unsigned int i = 0;i<alfabet.length();i++)
@@ -92,22 +92,30 @@ void renotare(int X[VEC_SIZE][VEC_SIZE],int notare[VEC_SIZE])
   for(int i=0;i<nrStari+1;i++)
     //initiem vectorul cu -1, adica valori goale
     notare[i] = -1;
+  cout<<"Acum, o sa luam starile pe rand si o sa vedem daca au stari echivalente\n";
+  cout<<"Vom face o renotare, fiecare stare v-a avea un corespondent in AFD-ul minimal\n";
+  cout<<"Starile echivalente vor avea acelas corespondent.\n";
   int indiceStare = 0;
   for(int i=0;i<nrStari+1;i++)
     {//pentru fiecare stare nenotata verificam daca are stari echivalente
       if(notare[i]<0)
         {
           notare[i] = indiceStare;
+		  cout<<"Corespondentul lui "<<i<<" este "<<indiceStare<<endl;
           for(int j=i+1;j<nrStari;j++)
           {//trecem toate starile echivalente ca aceeasi stare in noul AFD
             if(!X[i][j])
-              notare[j] = indiceStare;
+			{
+			  notare[j] = indiceStare;
+			  cout<<j<<" este echivalent cu el\n";
+			}
           }
           indiceStare++; // trecem la starea urmatoare
         }
     }
   stariMIN = indiceStare-1;   //Asta va fi noul nr de stari
 }
+
 void populareMIN(int notare[VEC_SIZE])
 {
   for(int i=0;i<nrStari+1;i++)
@@ -148,6 +156,9 @@ int minimizare()
                 X[i][j] = 0,X[j][i] = 0;
         }
     }
+	cout<<"Matricea de echivalenta la primul pas\n";
+    afisare_matrice(X,nrStari+1,nrStari+1);
+	cout<<"Acutm cautam combinatii de stari echivalente care au tranzitii in stari ne-echivalente...\n";
     bool changed;
     do
     {
@@ -165,6 +176,10 @@ int minimizare()
                             X[i][j] = 1;
                             X[j][i] = 1;
                             changed = true;
+							cout<<"Am gasit ("<<i<<","<<j<<") ";
+							cout<<"care merg cu "<<alfabet[k]<<" in ";
+							cout<<delta(i,alfabet[k])<<","<<delta(j,alfabet[k]);
+							cout<<"\n";
                         }
                     }
                 }
@@ -237,7 +252,7 @@ int AFDcomplet(int nrStari, int matrice[VEC_SIZE][VEC_SIZE],string alfabet)
 int main()
 {
     cout << "Hello world!" << endl;
-    ifstream f("date.in");
+    ifstream f("date3.in");
     ofstream F("iesire.out");
     ostream& out = F;
     citire_fisier(f);
