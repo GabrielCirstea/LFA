@@ -252,7 +252,7 @@ int AFDcomplet(int nrStari, int matrice[VEC_SIZE][VEC_SIZE],string alfabet)
 int main()
 {
     cout << "Hello world!" << endl;
-    ifstream f("date3.in");
+    ifstream f("date.in");
     ofstream F("iesire.out");
     ostream& out = F;
     citire_fisier(f);

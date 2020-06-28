@@ -80,7 +80,7 @@ void citire_fisier(ifstream &f)
 list<int>& lambda_inchidere(int nod, char *vizitat)
 {
     vizitat[nod] = 1;               ///visitam nodul curent
-    list<int> &inchiderea = *new list<int>;
+    list<int> &inchiderea = *new list<int>;		// poate ca cineva o sa dea si delete
     inchiderea.push_back(nod);      ///adaugam in lista nodul curent
     int lambdaI = alfabet.find('\\'); //indicele pt lambda
     forit(matrice[nod][lambdaI], it)
@@ -107,10 +107,12 @@ int compMultimi(set<int> multime, set<int> multime2)
       return 0;
   return 1;
 }
+
 //informatiile AFD-ului obtinut
 int stariAFD = 0;
 int finaleAFD[VEC_SIZE]={0};
 int matriceAFD[VEC_SIZE][VEC_SIZE]={{0}};
+
 void toAFD()
 {
   // cum apucam noi problema?
@@ -123,11 +125,22 @@ void toAFD()
   int nrMultimi=1, indexStare=0;
   multimiAFD[0] = set<int>({0});
   list<int> inchidere[VEC_SIZE];
-  for(int i=0;i<nrStari;i++)
+  for(int i=0;i<=nrStari;i++)
     {
       char vizitat[VEC_SIZE]={0};
       inchidere[i]=lambda_inchidere(i,vizitat);
     }
+  //afisare inchideri
+  {
+	  cout<<"Lambda inchiderile:\n";
+	  for(int i=0;i<=nrStari;i++)
+	  {
+		  cout<<i<<": ";
+		  forit(inchidere[i],it)
+			  cout<<*it<<" ";
+		  cout<<endl;
+	  }
+  }
   queue<set<int> > coada;
   coada.push(set<int>({0}));
   while(!coada.empty())
@@ -174,6 +187,7 @@ void toAFD()
           finaleAFD[i]=1;    //atunic multimea devine stare finala
     }
 }
+
 void scrieAFD(ostream &out)
 {
   out<<stariAFD<<endl;
