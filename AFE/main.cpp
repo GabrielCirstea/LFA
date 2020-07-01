@@ -10,6 +10,7 @@ using namespace std;
 // daca avem mai multe tranzitii intre x si y, fom face o singura tranzitie cu toate caracterele
 // retinem renotarea si retinem etichetele ca indici
 #define VEC_SIZE 20     ///pt alocarea statica
+#define LAMBDA '\\'
 #define forit(lista,it) for(list<int>::iterator it = lista.begin();it!=lista.end();it++)
 #define EMP_BUF(fisier) {\
         char c = fisier.peek();\
@@ -19,6 +20,7 @@ using namespace std;
             c = fisier.peek();\
         }\
     }
+
 int nrStari;
 int stariFinale[VEC_SIZE];
 string alfabet;
@@ -33,6 +35,7 @@ void afisare()
         cout<<stariFinale[i]<<" ";
     cout<<endl;
 }
+
 void init_matrice(int matrice[VEC_SIZE][VEC_SIZE], int linii, int col ,int val)
 {
   for(int i=0;i<linii;i++)
@@ -43,6 +46,7 @@ void init_matrice(int matrice[VEC_SIZE][VEC_SIZE], int linii, int col ,int val)
         }
     }
 }
+
 void afisare_matrice(list<int> matrice[20][20],int dimMatrice)      ///afisarea pt AFN
 {
     cout<<"    ";
@@ -70,9 +74,9 @@ void citire_fisier(ifstream &f)
     f>>nrStari;
     f.get();
     EMP_BUF(f);
-    getline(f,alfabet);
-    alfabet+='\\';      ///lambda este '\'
-    for(int i=0;i<=nrStari;i++)
+    getline(f,alfabet);		//citeste alfabetul
+    alfabet+= LAMBDA;  ///lambda este '\'
+    for(int i=0;i<=nrStari;i++)		//citeste starile finale
     {
         f>>stariFinale[i];
     }
@@ -88,86 +92,150 @@ void citire_fisier(ifstream &f)
         matrice[sursa][alfabet.find(litera,0)].push_back(dest);
     }
 }
-vector<string> etichete;
-int matriceAFE[VEC_SIZE][VEC_SIZE];
-string construieste_eticheta(int src,int target)
-{
-  string eticheta;
-  for(int c=0;alfabet[c];c++) // cautam in fiecare tranzitie
-    {
-      // std::find() cauta un element in obiecte gen vector/list, care folosec iterator
-      // functia returneaza un iterator la pozitia in care a gasit elementul
-      //sau iterator la finalul sirului daca elementul nu a fost gasit
-      list<int>::iterator it = find(matrice[src][c].begin(),matrice[src][c].end(),target);  // daca tranzitia ne duce la starea cautata
-      if(it != matrice[src][c].end())
-        if(alfabet[c]!='\\' || !eticheta.size())
-          eticheta += alfabet[c]; // adaugam litera(tranzitia) in eticheta
-    }
-  sort(eticheta.begin(),eticheta.end());
-  return eticheta;
-}
-int cauta_eticheta(string& eticheta,vector<string> &etichete)
-{
-  for(int k=0;k<etichete.size();k++)
-    { // cautam eticheta in lista
-      if(etichete[k] == eticheta)
-        { // daca o avem deja nu o mai adaugam
-          return k;
-        }
-    }
-    etichete.push_back(eticheta); // daca nu am gasit eticheta o bagam in lista
-    return etichete.size()-1;
-}
-void scrie_etichete(vector<string> &etichete)
-{
-  init_matrice(matriceAFE,nrStari,nrStari,-1);
-  for(int i=0; i<nrStari+1; i++)
-    {
-      for(int j=0; j<nrStari+1; j++)
-        {
-          string eticheta = construieste_eticheta(i,j);
-          matriceAFE[i][j] = cauta_eticheta(eticheta,etichete);
-        }
-    }
-}
-//cautam si setam noua stare finala
 
-void afisare_etichete(vector<string> &etichete)
+void appendExp(string& exp, const string& c)
 {
-  int i = 0;
-  for(string s:etichete)
-    {
-      cout<<i++<<": "<<s<<endl;
-    }
+	if(exp.find(LAMBDA,0) != string::npos)		// daca aveam lambda in cuvant steergem tot
+		exp.erase();							// cel mai probabil era doar lambda acolo
+	if(exp.length())
+		exp += "|";
+	exp += c;
 }
-void afisare_AFE(int matriceAFE[VEC_SIZE][VEC_SIZE],int dim)
-{// e o matrice patratica
-  cout<<"----------\n"<<"Matreice AFE\n";
-  cout<<"  ";
-  for(int i=0;i<dim;i++)
+
+void appendExp(string& exp, char c)		// adauga caractere in expresia initiala a AFE
+{
+	if(exp.find(LAMBDA,0) != string::npos)		// daca aveam lambda in cuvant steergem tot
+		exp.erase();							// cel mai probabil era doar lambda acolo
+	if(exp.length())
+	{
+		if(c == LAMBDA)		// nu adaugam lambda dupa alta litera
+			return;
+		exp += "|";
+	}
+	exp += c;
+}
+
+//matricea AFE va tine mintea ranzitia de la stare la stare
+//					nu ce tranzitie pleaca din stare
+//Prima stare v-a fi noua stare initiala
+//aici se adauga si starea finala
+string matriceAFE[VEC_SIZE][VEC_SIZE];
+int stariAFE;		// se adauga si noua stare initiala si cea finala
+
+void matrice_AFE()		// ma mai gandesc la nume
+{		// constuieste matricea pentru AFE
+	stariAFE = nrStari+2;
+	matriceAFE[0][1] = LAMBDA;		// prima tranzitie e intre starea 0 si 1(vechea stare initiala)
+	// transformam matricea anterioara in noua matrice
+	for(int i = 0;i< stariAFE;i++)
+	{		// facem tranzitiile pentru fiecare litera din starea i
+		for(int c = 0; alfabet[c]; c++)
+			for(int x : matrice[i][c])
+			{
+				cout<<"dam apend la "<<alfabet[c]<<" pt "<<i<<"si "<<x<<endl;
+				appendExp(matriceAFE[i+1][x+1],alfabet[c]);
+				cout<<matriceAFE[i+1][x];
+			}
+	}
+	// facem starea finala
+	for(int i = 0;i<=nrStari;i++)
+	{
+		if(stariFinale[i])
+			matriceAFE[i+1][stariAFE] = LAMBDA;
+	}
+}
+
+void afisare_matriceAFE(string matrice[20][20],int dimMatrice)      ///afisarea pt AFN
+{
+    cout<<"    ";
+    for(unsigned int i = 0;i<dimMatrice;i++)
+        cout<<i<<"    ";
+    cout<<endl;
+    for(int i = 0;i<dimMatrice;i++)
     {
-      cout<<i<<" ";
-    }
-  cout<<endl;
-  for(int i=0;i<dim;i++)
-    {
-      cout<<i<<":";
-      for(int j=0;j<dim;j++)
+        cout<<i<<":";
+        for(unsigned int j = 0;j<dimMatrice;j++)
         {
-          cout<<matriceAFE[i][j]<<" ";
+            cout<<"{";
+                cout<<matrice[i][j]<<", ";
+            cout<<"} ";
         }
-      cout<<endl;
+        cout<<endl;
     }
 }
+
+string paranteze(const string& exp)
+{
+	string rez;
+	if(exp.length()>1)
+		rez = "(" + exp + ")";
+	else
+		rez = exp;
+	return rez;
+}
+
+bool eliminare_latura(int start, int stare)		// primeste indicele starii si face legatura
+{
+	bool modificare = 0; // daca s-au produs schimbari
+	for(int i = 0;i<stariAFE;i++)
+	{
+		if(i != stare && matriceAFE[stare][i].length())
+		{
+			modificare = true;
+			string expresie;
+			expresie = paranteze(matriceAFE[start][stare]);
+			matriceAFE[start][stare].clear();
+			if(matriceAFE[stare][stare].length())	// daca avem bucla
+			{
+				appendExp(expresie,paranteze(matriceAFE[stare][stare]));
+				expresie += "*";
+			}
+			if(matriceAFE[stare][i].find(LAMBDA,0) == string::npos)		//  cuvantul vid nu se adauga in expresie
+				expresie += matriceAFE[stare][i];
+			
+			// o adaugam cu \"sau\" intre starea de inceput si cea la care am ajuns
+			appendExp(matriceAFE[start][i],expresie);
+
+			//stergem legatura stare - i
+			matriceAFE[stare][i].erase();
+		}
+	}
+	// stergem tranzitia dintre cele doua stari pentru a nu o repeta
+	//if(modificare)
+		//matriceAFE[start][stare].clear();
+	
+	return modificare;
+}
+
+void expresitivizare()
+{
+	bool run = true;
+	while(run)
+	{
+		run = false;
+		for(int i =1; i<stariAFE;i++)
+		{
+			if(matriceAFE[0][i].length())		// daca avem legatura intre stari
+			{
+				if(eliminare_latura(0,i))
+					run = true;
+			}
+		}
+	}
+}
+
+
 int main()
 {
   cout<<"Salutare!\n";
-  ifstream f("date.in");
+  ifstream f("date3.in");
   citire_fisier(f);
   afisare();
   afisare_matrice(matrice,nrStari+1);
-  scrie_etichete(etichete);
-  afisare_etichete(etichete);
-  afisare_AFE(matriceAFE, nrStari+1);
+  matrice_AFE();
+  afisare_matriceAFE(matriceAFE,stariAFE+1);
+  expresitivizare();
+  afisare_matriceAFE(matriceAFE,stariAFE+1);
+
   return 0;
 }

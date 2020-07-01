@@ -5,37 +5,17 @@
 Dintr-un automat finit oarecare(eventual AFN lambda) vrem sa scoatem o expresie regulata.  
 
 ### Idei/Algoritm:
-* Vom renota tranzitiile cu etichete:
-  * daca intre 2 stari exista mai multe tranzitii, atunci eticheta va fi reuniunea tranzitiilor(simbolurulor).
-___
-Vom avea starile si etichetele dintre stari.  
-Etichetele:  
-| index | eticheta        |  
-|-------|-----------------|  
-|     1 | ab              |  
-|     2 | b               |  
-|     3 | alta eticheta   |  
-|     4 | inca o eticheta |  
-|     5 | inca o eticheta |  
-|     6 | inca o eticheta |  
-|-------|-----------------|  
-Se retinem starile si etichetele in:   
-- liste de muchi?  
-- sau lista de adiacenta?  
-- o matrice cu starile pe liniis si coloane si indicele ethichetei...  
-| index |       1 |   2 |   3 | ceva comentarii                        |  
-|-------|---------|-----|-----|----------------------------------------|  
-|     1 | 0(NULL) |   3 |   0 | # 0 sau -1 pt NULL adica valoare goala |  
-|     2 |       1 |   2 |   3 |                                        |  
-|     3 |       0 |   0 |   0 | # 3 e capat de linie.                  |  
-|     4 |     ... | ... | ... |                                        |  
-|     5 |     ... | ... | ... |                                        |  
-* Pentru starile finale:
-  * daca sunt mai multe stari finale sau daca din starea finala exsta tranzitii care ies din aceasta, atunci se va creea o noua stare finala si toate starile finale anterioare vor avea o lambda trnazitie catre aceasa.
-  * analog se va proceda si in cazul starilor initiale
+* se aduce la un AFN cu o stare initiala in care nu intra nici o alta tranzitie
+	* se shifteaza toate starile si tranzitiile a.i in starea 0(noua stare initiala) sa nu intre nici o tranzitie.
+	* se adauga o noua stare finala la care se ajunge cu lambda tranzitii din toatea starile finale initiale
+* matricea pentru AFE este o matrice de string-uri care reprezinta tranzitia dintre oricare 2 stari
+	* popularea matricei sa face prin a se trece in aceasta tranzitia dintre starile automatului initial
+	* daca intre 2 stari exista mai multe tranzitii in matricea AFE va fi reuniunea acestora "|" sau "+"
+* se incepe eliminarea starilor de la starea 0
+	* eliminarea se face incepand din starea i si trecand prin starea j, legandu-se i cu toate starile cu care j este legata.
+	* apoi se elimina tranzitia i - j
+* la sfarsit ar trebui sa ramana o singura tranzitie care reprezinta expresia cautata.
 ___
 ## Stadiu curent
-Programul citeste un automat(AFN) dintr-un fisier si face notarea etichetelor intr-o matrice cu formatul de mai sus.  
-## TO BE CONTINUED:
-* Crearea unei noi stari finale si initiale daca este nevoie.
-* Combinarea etichetelor prin reuniune(sumare) sau concatenare. Adica algoritmul propriu zis.
+Programul aplica algoritmul descris mai sus.
+Rezultatul nu este inca cel corect.
