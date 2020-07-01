@@ -115,6 +115,20 @@ void appendExp(string& exp, char c)		// adauga caractere in expresia initiala a 
 	exp += c;
 }
 
+void concatExp( string& exp,char c)		// concatenarea unui caracter la expresie
+{
+	if(c == LAMBDA)		// nu adaugam lambda
+		return;
+	exp += c;
+}
+
+void concatExp( string& exp,const string& c)	// cancatenare la expresie
+{
+	if(exp.find(LAMBDA,0) != string::npos)		// daca aveam lambda in cuvant steergem tot
+		exp.erase();							// cel mai probabil era doar lambda acolo
+	exp += c;
+}
+
 //matricea AFE va tine mintea ranzitia de la stare la stare
 //					nu ce tranzitie pleaca din stare
 //Prima stare v-a fi noua stare initiala
@@ -123,7 +137,7 @@ string matriceAFE[VEC_SIZE][VEC_SIZE];
 int stariAFE;		// se adauga si noua stare initiala si cea finala
 
 void matrice_AFE()		// ma mai gandesc la nume
-{		// constuieste matricea pentru AFE
+{	// constuieste matricea pentru AFE
 	stariAFE = nrStari+2;
 	matriceAFE[0][1] = LAMBDA;		// prima tranzitie e intre starea 0 si 1(vechea stare initiala)
 	// transformam matricea anterioara in noua matrice
@@ -167,6 +181,8 @@ void afisare_matriceAFE(string matrice[20][20],int dimMatrice)      ///afisarea 
 string paranteze(const string& exp)
 {
 	string rez;
+	if(exp.find(LAMBDA,0) != string::npos)
+		return rez;
 	if(exp.length()>1)
 		rez = "(" + exp + ")";
 	else
@@ -177,7 +193,7 @@ string paranteze(const string& exp)
 bool eliminare_latura(int start, int stare)		// primeste indicele starii si face legatura
 {
 	bool modificare = 0; // daca s-au produs schimbari
-	for(int i = 0;i<stariAFE;i++)
+	for(int i = 0;i<=stariAFE;i++)
 	{
 		if(i != stare && matriceAFE[stare][i].length())
 		{
@@ -187,7 +203,7 @@ bool eliminare_latura(int start, int stare)		// primeste indicele starii si face
 			matriceAFE[start][stare].clear();
 			if(matriceAFE[stare][stare].length())	// daca avem bucla
 			{
-				appendExp(expresie,paranteze(matriceAFE[stare][stare]));
+				concatExp(expresie,paranteze(matriceAFE[stare][stare]));
 				expresie += "*";
 			}
 			if(matriceAFE[stare][i].find(LAMBDA,0) == string::npos)		//  cuvantul vid nu se adauga in expresie
@@ -207,7 +223,7 @@ bool eliminare_latura(int start, int stare)		// primeste indicele starii si face
 	return modificare;
 }
 
-void expresitivizare()
+void expresitivizare()			// funcita care elimina tranzitiile
 {
 	bool run = true;
 	while(run)
@@ -219,6 +235,7 @@ void expresitivizare()
 			{
 				if(eliminare_latura(0,i))
 					run = true;
+				afisare_matriceAFE(matriceAFE,stariAFE+1);
 			}
 		}
 	}
@@ -228,7 +245,7 @@ void expresitivizare()
 int main()
 {
   cout<<"Salutare!\n";
-  ifstream f("date3.in");
+  ifstream f("date.in");
   citire_fisier(f);
   afisare();
   afisare_matrice(matrice,nrStari+1);
